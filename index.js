@@ -5,8 +5,9 @@ require('dotenv').config();
 const { registerEmployee } = require('./Api_Functions/registerEmployee');
 const { getEmployees } = require('./Api_Functions/getEmployees');
 const { register, login } = require('./Api_Functions/auth');
-const { applyGraphQL } = require('./Api_Functions/graphql');
+const { applyGraphQL } = require('./Api_Functions/graphql_fixed');
 const { connectDB } = require('./Db_Functions/connection');
+const { attachAccount } = require('./Api_Functions/authHelpers');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -18,8 +19,6 @@ app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'API is running' });
 });
 
-
-
 app.post('/auth/register', register);
 app.post('/auth/login', login);
 
@@ -28,7 +27,6 @@ app.get('/get-employees', getEmployees);
 app.get('/employee/:id', require('./Api_Functions/getEmployeeById').getEmployeeById);
 app.put('/update-employee', require('./Api_Functions/updateEmployee').updateEmployee);
 app.delete('/delete-employee/:id', require('./Api_Functions/deleteEmployee').deleteEmployee);
-
 
 
 (async function start() {

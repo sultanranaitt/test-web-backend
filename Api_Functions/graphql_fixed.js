@@ -153,6 +153,7 @@ const root = {
       if (!name || !email || !password) {
         throw new Error('Missing required fields');
       }
+      // derive username from name internally
       const usernameBase = name.trim().toLowerCase().replace(/\s+/g, '');
       let username = usernameBase;
       let counter = 0;
@@ -160,6 +161,7 @@ const root = {
         counter += 1;
         username = `${usernameBase}${counter}`;
       }
+
       const existing = await Account.findOne({ $or: [{ username }, { email }] });
       if (existing) {
         throw new Error('Name-derived username or email already exists');
@@ -211,6 +213,7 @@ const root = {
         };
       }
 
+      // fallback to User collection
       const user = await User.findOne({ email: email.trim().toLowerCase() }).exec();
       if (!user || !user.password) throw new Error('Invalid credentials');
       const bcrypt = require('bcryptjs');
@@ -266,6 +269,7 @@ const root = {
 
   updateEmployee: async ({ id, name, age, class: className, subject, attendance }, context) => {
     try {
+      // no admin required
       const updateData = {};
       if (name) updateData.name = name.trim();
       if (age) updateData.age = age;
@@ -297,6 +301,7 @@ const root = {
 
   deleteEmployee: async ({ id }, context) => {
     try {
+      // no admin required
       const deletedUser = await User.findByIdAndDelete(id).exec();
       if (!deletedUser) {
         throw new Error('Employee not found');
@@ -361,4 +366,3 @@ module.exports = {
   graphqlMiddleware,
   applyGraphQL,
 };
-

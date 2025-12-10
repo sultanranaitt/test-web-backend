@@ -23,8 +23,34 @@ function getTokenFromHeader(authHeader) {
   return null;
 }
 
+// Express middleware: attach account to req if token provided
+async function attachAccount(req, res, next) {
+  try {
+    const token = getTokenFromHeader(req.headers.authorization || req.headers.Authorization);
+    if (!token) {
+      req.account = null;
+      return next();
+    }
+    const decoded = verifyToken(token);
+    if (!decoded || !decoded.accountId) {
+      req.account = null;
+      return next();
+    }
+    // require inside function to avoid circular requires at module load
+    const Account = require('../Db_Functions/models/Account');
+    const account = await Account.findById(decoded.accountId).exec();
+    req.account = account || null;
+    return next();
+  } catch (err) {
+    console.error('attachAccount error:', err);
+    req.account = null;
+    return next();
+  }
+}
+
 module.exports = {
   generateToken,
   verifyToken,
   getTokenFromHeader,
+  attachAccount,
 };
