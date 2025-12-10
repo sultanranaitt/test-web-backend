@@ -15,13 +15,20 @@ const PORT = process.env.PORT || 4000;
 const GRAPHQL_PATH = process.env.GRAPHQL_PATH || '/graphql';
 
 app.use(bodyParser());
-app.use(cors({
-    origin: ["http://localhost:4000",
-        "http://localhost:5173",
-        "http://sprightly-yeot-927fb6.netlify.app",
-        "https://test-web-backend-production.up.railway.app/"],
+
+const corsOptions = {
+    origin: [
+        'http://localhost:4000',
+        'http://localhost:5173',
+        'https://sprightly-yeot-927fb6.netlify.app'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-  }));
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'API is running' });
