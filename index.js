@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('express').json;
 require('dotenv').config();
+const cors=require('cors');
 
 const { registerEmployee } = require('./Api_Functions/registerEmployee');
 const { getEmployees } = require('./Api_Functions/getEmployees');
@@ -14,6 +15,10 @@ const PORT = process.env.PORT || 4000;
 const GRAPHQL_PATH = process.env.GRAPHQL_PATH || '/graphql';
 
 app.use(bodyParser());
+app.use(cors({
+    origin: ["http://localhost:3000", "https://test-web-backend-production.up.railway.app/"],
+    credentials: true,
+  }));
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'API is running' });
@@ -32,8 +37,9 @@ app.delete('/delete-employee/:id', require('./Api_Functions/deleteEmployee').del
 (async function start() {
     await connectDB();
     await applyGraphQL(app, GRAPHQL_PATH);
+    console.log('Starting server...', { PORT, GRAPHQL_PATH, hasMongoURI: !!process.env.MONGODB_URI, nodeEnv: process.env.NODE_ENV || 'development' });
 
-    app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}/`);
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running on port ${PORT}`);
     });
 })();
