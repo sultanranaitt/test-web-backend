@@ -16,7 +16,10 @@ const GRAPHQL_PATH = process.env.GRAPHQL_PATH || '/graphql';
 
 app.use(bodyParser());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://test-web-backend-production.up.railway.app/"],
+    origin: ["http://localhost:4000",
+        "http://localhost:5173",
+        "http://sprightly-yeot-927fb6.netlify.app",
+        "https://test-web-backend-production.up.railway.app/"],
     credentials: true,
   }));
 
